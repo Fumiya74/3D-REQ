@@ -1,8 +1,8 @@
 #最終的に作りたいフォーマットは全質問がリストになっていて、１つの質問ごとに辞書型で詳細を記述
 import json
 
-file_path = "../data/edited_objects.json"
-objects_json = open("../data/objects.json","r")
+file_path = "../../data/edited_objects.json"
+objects_json = open("../../data/objects.json","r")
 objects = json.load(objects_json)
 
 #全てのインスタンスを一つのlistにまとめて格納、各要素は1層のdict

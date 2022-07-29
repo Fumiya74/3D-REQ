@@ -1,9 +1,0 @@
-[
-    {
-    "question": "What coler is it?", 
-    "object_ids":[1,5,8],
-    "referring_expression":"The L-shaped table",
-    "referring_expression_id":[1],    
-    "scan":"0988ea72-eb32-2e61-8344-99e2283c2728"
-    }
-]
