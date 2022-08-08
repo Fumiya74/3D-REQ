@@ -4,6 +4,9 @@ import json
 file_path = "../../data/edited_objects.json"
 objects_json = open("../../data/objects.json","r")
 objects = json.load(objects_json)
+r_open_file_path = '../../data/edited_relationshios.json'
+r_file_open = open(r_open_file_path,'r')
+r_file = json.load(r_file_open)
 
 #全てのインスタンスを一つのlistにまとめて格納、各要素は1層のdict
 all_objects = []
@@ -28,7 +31,16 @@ for scene in scenes:
         object.pop('eigen13')
         object.pop('rio27')
         object.pop('affordances',None)
-        all_objects.append(object)
+        object['relationships'] = []
+        for relationships in r_file:
+            if relationships['scene_id'] == scene_id:
+                for relationship in relationships['relationships']:
+                    if str(relationship[0]) == object['id']:
+                        object['relationships'].append([str(relationship[1]),relationship[3]])
+                #一回該当箇所が出たらもう登場しないからブレイク
+                break
 
+        all_objects.append(object)
+#TODO same_class_listの作成
 with open(file_path,'w') as outfile:
     json.dump(all_objects, outfile, indent=2)
