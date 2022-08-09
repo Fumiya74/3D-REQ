@@ -1,3 +1,8 @@
+"""""
+
+データセットv1（object-object spatial relationships含む リスト表現） 作成用
+
+"""""
 import json
 import random
 from collections import Counter
@@ -16,22 +21,22 @@ def main():
     #tar_object = file[990]
     for tar_object in tqdm(file):
         tar_label = tar_object['label']
-        if all([tar_label != 'wall',tar_label != 'floor',tar_label != 'ceiling']):
+        if all([tar_label != 'wall',tar_label != 'floor',tar_label != 'ceiling',tar_object['only'] == False]):
             tar_n = file.index(tar_object)
             #if tar_n >= 990:
                 #break
             attributes = tar_object['attributes']
             ref_exp = [tar_label]
-            unknown_attributes = []
-            color_flag = random.randrange(2)
-            shape_flag = random.randrange(2)
-            size_flag = random.randrange(2)
-            material_flag = random.randrange(2)
-            texture_flag = random.randrange(2)
+            unknown = []
+            color_flag = random.randrange(6)
+            shape_flag = random.randrange(6)
+            size_flag = random.randrange(6)
+            material_flag = random.randrange(6)
+            texture_flag = random.randrange(6)
             #
-            relation_flag = random.randrange(2)
+            s_relation_flag = random.randrange(6)
 
-
+            #1つのAttributeから2つgetされる場合にわかりやすくしたいのでリストでとる
             if color_flag == 1:
                 #colorなしの場合は空リスト
                 color = attributes.get('color',[])
@@ -48,26 +53,36 @@ def main():
             if texture_flag == 1:
                 texture = attributes.get('texture',[])
             else: texture = []
+            if s_relation_flag == 1:
+                if tar_object['relationships'] != []:
+                    s_relation = [random.choice(tar_object['relationships'])]
+                else:
+                    s_relation = []
+            else:
+                s_relation = []
 
             #Referring Expressionに含まれない
             if color == []:
-                unknown_attributes.append('color')
+                unknown.append('color')
             if shape == []:
-                unknown_attributes.append('shape')
+                unknown.append('shape')
             if size == []:
-                unknown_attributes.append('size')
+                unknown.append('size')
             if material == []:
-                unknown_attributes.append('material')
+                unknown.append('material')
             if texture == []:
-                unknown_attributes.append('texture')
+                unknown.append('texture')
+            if s_relation == []:
+                unknown.append('relationships')
 
             ref_exp.extend(color)
             ref_exp.extend(shape)
             ref_exp.extend(size)
             ref_exp.extend(material)
             ref_exp.extend(texture)
+            ref_exp.extend(s_relation)
             
-            re_gem.Ref_Gen(questions,tar_n,ref_exp,file,unknown_attributes)
+            re_gem.Ref_Gen(questions,tar_n,ref_exp,file,unknown)
     #print("a")
     print(questions)
     print(len(questions))

@@ -1,3 +1,8 @@
+"""""
+
+データセットv0（attributeのみ リスト表現） 作成用
+
+"""""
 import json
 import random
 from collections import Counter

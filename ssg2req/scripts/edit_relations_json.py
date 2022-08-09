@@ -38,6 +38,7 @@ for scene in obj_scenes:
     scene_id = scene["scan"] 
     objects_list = scene["objects"]
     objects_label_list = []
+    #床とか天井とかはアンカーとして不向きなので除く
     no_anchor_class = ['floor','ceiling']
     relexist = False
     for object in objects_list:

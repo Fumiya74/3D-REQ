@@ -1,10 +1,11 @@
 #最終的に作りたいフォーマットは全質問がリストになっていて、１つの質問ごとに辞書型で詳細を記述
 import json
+from tqdm import tqdm
 
-file_path = "../../data/edited_objects_v2.json"
+file_path = "../../data/edited_objects.json"
 objects_json = open("../../data/objects.json","r")
 objects = json.load(objects_json)
-r_open_file_path = '../../data/edited_relationships_v2.json'
+r_open_file_path = '../../data/edited_relationships.json'
 r_file_open = open(r_open_file_path,'r')
 r_file = json.load(r_file_open)
 
@@ -19,7 +20,7 @@ all_objects = []
 #True
 scenes = objects["scans"]
 
-for scene in scenes:
+for scene in tqdm(scenes):
     #現在探索中のscan名を変数で記憶
     scene_id = scene["scan"] 
     objects_list = scene["objects"]
@@ -33,6 +34,10 @@ for scene in scenes:
         object.pop('rio27')
         object.pop('affordances',None)
         obj_rel = []
+        object['only'] = True
+        for oth_obj in objects_list:
+            if object['label'] == oth_obj['label'] and object['id'] != oth_obj['id']:
+                object['only'] = False
 
         for relationships in r_file:
             if relationships['scene_id'] == scene_id:
