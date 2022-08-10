@@ -62,7 +62,7 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                 if uncertainty == 0:
                         none_restrictor = random.randrange(2)
                         if none_restrictor == 1:
-                                q = {"scene_id":target['scene_id'],"label":target['label'],"Refer":ref_exp,"ids":distractor_list,"question":'None'}
+                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'None'}
                                 questions.append(q)
                         #TODO
                         #there is not構文の作成
@@ -79,11 +79,11 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                                                 comparable = True
                                                 
                         if comparable:
-                                q = {"scene_id":target['scene_id'],"label":target['label'],"Refer":ref_exp,"ids":distractor_list,"question":'comparative'}
+                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'comparative'}
                                 questions.append(q) 
                                 refer = copy.copy(ref_exp)
                                 refer.append(com_exp)
-                                q = {"scene_id":target['scene_id'],"label":target['label'],"Refer":refer,"ids":target['id'],"question":'None'}
+                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":target['id'],"question":'None'}
                                 questions.append(q)
 
 
@@ -132,7 +132,7 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                                         #質問した属性をtargetが持っていない場合を除く
                                         if len(next_ref_exp) != ref_length:
                                                 unknown.remove(q_attribute)
-                                                q = {"scene_id":target['scene_id'],"label":target['label'],"Refer":refer,"ids":distractor_list,"question":q_attribute}
+                                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":distractor_list,"question":q_attribute}
                                                 questions.append(q)
 
                                                 if unknown != []:

@@ -41,9 +41,11 @@ def main():
             if color_flag == 1:
                 #colorなしの場合は空リスト
                 color = attributes.get('color',[])
+
             else: color = []
             if shape_flag == 1:
                 shape = attributes.get('shape',[])
+
             else: shape = []
             if size_flag == 1:
                 size = attributes.get('size',[])
@@ -99,8 +101,8 @@ def main():
             
             re_gen_v2.Ref_Gen(questions,tar_n,ref_exp,file,known,unknown)
     #print("a")
-    print(questions)
-    print(len(questions))
+    #print(questions)
+    print('RE数:',len(questions))
     q_list = []
     l_list = []
     for q in questions:
@@ -108,7 +110,9 @@ def main():
         l_list.append(q['label'])
     label_rank = Counter(l_list)
     question_rank = Counter(q_list)
-    print(label_rank.most_common())
-    print(question_rank.most_common())
+    #print(label_rank.most_common())
+    print('質問の内訳:',question_rank.most_common())
+    with open(out_file_path,'w') as outfile:
+        json.dump(questions, outfile, indent=2)
 
 main()
