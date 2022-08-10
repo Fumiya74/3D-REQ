@@ -6,7 +6,7 @@
 import json
 import random
 from collections import Counter
-import re_gem
+import ssg2req.scripts.re_gen_v2 as re_gen_v2
 from tqdm import tqdm
 
 #最初に渡すobjectsを同一シーンに絞る
@@ -68,7 +68,7 @@ def main():
             ref_exp.extend(material)
             ref_exp.extend(texture)
             
-            re_gem.Ref_Gen(questions,tar_n,ref_exp,file,unknown_attributes)
+            re_gen_v2.Ref_Gen(questions,tar_n,ref_exp,file,unknown_attributes)
     #print("a")
     print(questions)
     print(len(questions))

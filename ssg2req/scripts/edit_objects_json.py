@@ -8,6 +8,9 @@ objects = json.load(objects_json)
 r_open_file_path = '../../data/edited_relationships.json'
 r_file_open = open(r_open_file_path,'r')
 r_file = json.load(r_file_open)
+c_open_file_path = '../../data/edited_comparatives.json'
+c_file_open = open(c_open_file_path,'r')
+c_file = json.load(c_file_open)
 
 #全てのインスタンスを一つのlistにまとめて格納、各要素は1層のdict
 all_objects = []
@@ -34,6 +37,7 @@ for scene in tqdm(scenes):
         object.pop('rio27')
         object.pop('affordances',None)
         obj_rel = []
+        obj_com = []
         object['only'] = True
         for oth_obj in objects_list:
             if object['label'] == oth_obj['label'] and object['id'] != oth_obj['id']:
@@ -56,6 +60,12 @@ for scene in tqdm(scenes):
         obj_rel = list(set(obj_rel))
         obj_rel = [list(i) for i in obj_rel]
         object['relationships'] = obj_rel
+        for comparatives in c_file:
+            if comparatives['scene_id'] == scene_id:
+                for comparative in comparatives['relationships']:
+                    if str(comparative[0]) == object['id']:
+                        obj_com.append([comparative[3],str(comparative[1])])
+        object['comparatives'] = obj_com
         all_objects.append(object)
 
 with open(file_path,'w') as outfile:

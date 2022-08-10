@@ -6,7 +6,7 @@
 import json
 import random
 from collections import Counter
-import re_gem
+import  re_gen_v2
 from tqdm import tqdm
 
 #最初に渡すobjectsを同一シーンに絞る
@@ -21,12 +21,13 @@ def main():
     #tar_object = file[990]
     for tar_object in tqdm(file):
         tar_label = tar_object['label']
-        if all([tar_label != 'wall',tar_label != 'floor',tar_label != 'ceiling',tar_object['only'] == False]):
+        if all([tar_label != 'floor',tar_label != 'ceiling',tar_object['only'] == False]):
             tar_n = file.index(tar_object)
             #if tar_n >= 990:
                 #break
             attributes = tar_object['attributes']
             ref_exp = [tar_label]
+            known = []
             unknown = []
             color_flag = random.randrange(6)
             shape_flag = random.randrange(6)
@@ -64,16 +65,28 @@ def main():
             #Referring Expressionに含まれない
             if color == []:
                 unknown.append('color')
+            else:
+                known.append('color')
             if shape == []:
                 unknown.append('shape')
+            else:
+                known.append('shape')
             if size == []:
                 unknown.append('size')
+            else:
+                known.append('size')
             if material == []:
                 unknown.append('material')
+            else:
+                known.append('material')
             if texture == []:
                 unknown.append('texture')
+            else:
+                known.append('texture')
             if s_relation == []:
                 unknown.append('relationships')
+            else:
+                known.append('relation')
 
             ref_exp.extend(color)
             ref_exp.extend(shape)
@@ -81,8 +94,10 @@ def main():
             ref_exp.extend(material)
             ref_exp.extend(texture)
             ref_exp.extend(s_relation)
+
             
-            re_gem.Ref_Gen(questions,tar_n,ref_exp,file,unknown)
+            
+            re_gen_v2.Ref_Gen(questions,tar_n,ref_exp,file,known,unknown)
     #print("a")
     print(questions)
     print(len(questions))

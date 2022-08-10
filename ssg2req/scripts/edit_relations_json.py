@@ -5,15 +5,23 @@ from collections import Counter
 file_path = "../../data/relationships.json"
 relations_json = open(file_path,"r")
 relations = json.load(relations_json)
-out = "../../data/edited_relationships.json"
+out1 = "../../data/edited_relationships.json"
+out2 = "../../data/edited_comparatives.json"
 file_path = "../../data/edited_objects.json"
 objects_json = open("../../data/objects.json","r")
 objects = json.load(objects_json)
 all_scenes = []
 scan_dict = {}
 
+mode = 2
+
 #データセットに含めるrelationshipsのIDリスト
-spatial_list = [1,2,3,4,5,6,7,14,15,16,17,18,19,23,24,25,26]
+if mode == 1:
+    r_list = [1,2,3,4,5,6,7,14,15,16,17,18,19,23,24,25,26]
+
+if mode == 2:
+    r_list = [8,9,10,11,33,34,35,36,37,38,39]
+
 
 scenes = relations["scans"] #リスト型
 for scene in scenes:
@@ -22,7 +30,7 @@ for scene in scenes:
     #print(scan_dict['scene_id'])
     for relationship in scene['relationships']:
         #含まれる場合追加
-        if relationship[2] in spatial_list:
+        if relationship[2] in r_list:
             all_relat.append(relationship)
     
     scan_dict['relationships'] = all_relat
@@ -71,7 +79,10 @@ for scene in obj_scenes:
             scene_dict['relationships'] = relationships_list
     if relexist:
         all_scenes2.append(scene_dict.copy())
-
-with open(out,'w') as outfile:
-    json.dump(all_scenes2, outfile, indent=2)
+if mode == 1:
+    with open(out1,'w') as outfile:
+        json.dump(all_scenes2, outfile, indent=2)
+if mode == 2:
+    with open(out2,'w') as outfile:
+        json.dump(all_scenes2, outfile, indent=2)
 
