@@ -54,6 +54,7 @@ for scene in obj_scenes:
     
     objects_label_c = Counter(objects_label_list)
     for row in objects_label_c.most_common():
+        #シーン内に3つ以上オブジェクトが含まれているクラスをno_anchor_classに追加
         if row[1] >=3:
             no_anchor_class.append(row[0])
 

@@ -58,7 +58,7 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
         uncertainty = len(distractor_list)-1
         #print(uncertainty)
         if uncertainty <= max_uncer:
-                #ここを0にすると質問リストからNoneを取り除ける
+  
                 if uncertainty == 0:
                         none_restrictor = random.randrange(2)
                         if none_restrictor == 1:
