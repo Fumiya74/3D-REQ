@@ -9,7 +9,7 @@ from collections import Counter
 import  re_gen_v2
 from tqdm import tqdm
 
-#最初に渡すobjectsを同一シーンに絞る
+
 def main():
     open_file_path = '../../data/edited_objects.json'
     out_file_path = '../../data/question_data.json'
@@ -17,18 +17,16 @@ def main():
     file = json.load(file_open)
 
     questions = []
-    #ok = True
-    #tar_object = file[990]
+
     for tar_object in tqdm(file):
         tar_label = tar_object['label']
         if all([tar_label != 'floor',tar_label != 'ceiling',tar_object['only'] == False]):
             tar_n = file.index(tar_object)
-            #if tar_n >= 990:
-                #break
             attributes = tar_object['attributes']
             ref_exp = [tar_label]
             known = []
             unknown = []
+            #対象の属性が拾われる確率
             color_flag = random.randrange(6)
             shape_flag = random.randrange(6)
             size_flag = random.randrange(6)
@@ -37,7 +35,7 @@ def main():
             #
             s_relation_flag = random.randrange(6)
 
-            #1つのAttributeから2つgetされる場合にわかりやすくしたいのでリストでとる
+       
             if color_flag == 1:
                 #colorなしの場合は空リスト
                 color = attributes.get('color',[])

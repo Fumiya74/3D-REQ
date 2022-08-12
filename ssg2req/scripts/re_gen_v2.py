@@ -60,7 +60,8 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
         if uncertainty <= max_uncer:
   
                 if uncertainty == 0:
-                        none_restrictor = random.randrange(2)
+                        #noneが削除される確率を設定
+                        none_restrictor = random.randrange(4)
                         if none_restrictor == 1:
                                 q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'None'}
                                 questions.append(q)
@@ -81,10 +82,12 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                         if comparable:
                                 q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'comparative'}
                                 questions.append(q) 
-                                refer = copy.copy(ref_exp)
-                                refer.append(com_exp)
-                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":target['id'],"question":'None'}
-                                questions.append(q)
+                                none_restrictor = random.randrange(2)
+                                if none_restrictor == 1:
+                                        refer = copy.copy(ref_exp)
+                                        refer.append(com_exp)
+                                        q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":target['id'],"question":'None'}
+                                        questions.append(q)
 
 
                         else:
@@ -138,7 +141,6 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                                                 if unknown != []:
                                                         Ref_Gen(questions,next_tar_n,next_ref_exp,next_objects,known,unknown)
         #TODO
-        #REの重複を削除
         #unknownリストでは無く、knownリストを持ってq_attributeをknownリストの最後に追加していく仕様にすればどれがどのattributeなのか分かる
         #同じAttributeから取り出したものはandでつなげたいので、リスト構造にする
         return questions
