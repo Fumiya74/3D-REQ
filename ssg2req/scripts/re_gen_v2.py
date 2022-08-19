@@ -61,7 +61,7 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
   
                 if uncertainty == 0:
                         #noneが削除される確率を設定
-                        none_restrictor = random.randrange(4)
+                        none_restrictor = random.randrange(2)
                         if none_restrictor == 1:
                                 q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'None'}
                                 questions.append(q)
@@ -80,12 +80,18 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                                                 comparable = True
                                                 
                         if comparable:
-                                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'comparative'}
-                                questions.append(q) 
-                                none_restrictor = random.randrange(2)
+                                
+                                #com_expによってquestionをかえる
+                                if com_exp[0] in ["bigger than","smaller than","higher than","lower than"]:
+                                        q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'size'}
+                                        questions.append(q) 
+                                if com_exp[0] in ["darker than","brighter than"]:
+                                        q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'color'}
+                                        questions.append(q)
+                                none_restrictor = 1 #random.randrange(2)
                                 if none_restrictor == 1:
                                         refer = copy.copy(ref_exp)
-                                        refer.append(com_exp)
+                                        refer.append(com_exp)                         
                                         q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":target['id'],"question":'None'}
                                         questions.append(q)
 
@@ -137,6 +143,13 @@ def Ref_Gen(questions,tar_n,ref_exp,objects,known,unknown):
                                                 unknown.remove(q_attribute)
                                                 q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":distractor_list,"question":q_attribute}
                                                 questions.append(q)
+                                                if q_attribute == "color":
+                                                        questions.append(q)
+                                                        questions.append(q)
+                                                        questions.append(q)
+                                                if q_attribute == "size":
+                                                        questions.append(q)
+                                                        
 
                                                 if unknown != []:
                                                         Ref_Gen(questions,next_tar_n,next_ref_exp,next_objects,known,unknown)
