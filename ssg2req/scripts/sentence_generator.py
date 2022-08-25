@@ -3,12 +3,6 @@ import json
 from os import nice
 import random
 from this import s
-#TODO
-#1つのAttributeに3つ以上入っちゃっていないか調べる（入っちゃてた）
-#narrowとwideがどっちも入っちゃってるやつはなんだ
-#smallerとsmallが一緒になっちゃってるやつはあるのか
-#on the right(left) of
-#in front of
 
 #リストの平易化
 def flatten_list(l):
@@ -25,7 +19,11 @@ def segment_token(l):
         else:
             yield el.split()
 
-def main():
+def duplicate_delection(questions):
+    unique_questions = list(map(json.loads, set(map(json.dumps, questions))))
+    return unique_questions
+
+def sen_gen():
     open_file_path = '../../data/question_data.json'
     out_file_path = '../../data/question_sentence_data.json'
     file_open = open(open_file_path,'r')
@@ -35,6 +33,7 @@ def main():
     size_list = ["big","small","tall","low","narrow","wide"]
     material_list = ["wooden","plastic","metal","glass","stone","leather","concrete","ceramic","brick","padded","cardboard","marbled","carpet","cork","velvet"]
     texture_list = ["striped","patterned","dotted","colorful","checker","painted","shiny","tiled"]
+    state_list = []
     specify_words = ["see","touch","look","watch"]
     all_re = []
     for f in file:
@@ -194,5 +193,5 @@ def main():
 #TODO
 # とりあえずTOKEN分けする前の状態で出力させる        
 # Noneを減らす前のファイルに対して実行して、偏りをなくす   
-main()
+sen_gen()
             

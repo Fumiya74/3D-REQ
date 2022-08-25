@@ -50,9 +50,9 @@ for scene in tqdm(scenes):
                     if str(relationship[0]) == object['id']:
                         
                         #no_anchor_class以外
-                        #TODO
-                        #targetとanchorが同じだった場合は双方向relationshipsは削除
+                        
                         if relationship[4] not in relationships['no_anchor_class']:
+                            #targetとanchorが同じだった場合は双方向relationshipsは削除
                             if object['label'] != relationship[4] or relationship[2] not in [1,6,18,19]:
                                 #print([str(relationship[1]),relationship[3]])
                                 obj_rel.append([relationship[3],relationship[4]])
