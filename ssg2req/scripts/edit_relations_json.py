@@ -13,7 +13,7 @@ objects = json.load(objects_json)
 all_scenes = []
 scan_dict = {}
 
-mode = 2
+mode = 1
 
 #データセットに含めるrelationshipsのIDリスト
 if mode == 1:

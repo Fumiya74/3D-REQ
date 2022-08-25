@@ -74,7 +74,7 @@ def edit_relationships(rel_scenes,objects,r_list):
         if relexist:
             all_scenes2.append(scene_dict.copy())
         
-        return all_scenes2
+    return all_scenes2
 
 
     

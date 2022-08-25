@@ -50,11 +50,14 @@ def main():
                     if str(comparative[0]) == object['id']:
                         object_comparatives.append([comparative[3],str(comparative[1])])
         objects[objects.index(object)]['comparatives'] = object_comparatives
+    with open("./obj.json",'w') as outfile:
+        json.dump(objects, outfile, indent=2)
     
     questions = dataset_prepare(objects)
     
     with open(out_path,'w') as outfile:
         json.dump(questions, outfile, indent=2)
+
     print('RE数:',len(questions))
     q_list = []
     l_list = []
@@ -65,6 +68,6 @@ def main():
     question_rank = Counter(q_list)
     #print(label_rank.most_common())
     print('質問の内訳:',question_rank.most_common())
-
+    
 
 if __name__ == "__main__": main()
