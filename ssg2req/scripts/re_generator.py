@@ -4,6 +4,8 @@ from collections import Counter
 import copy
 from tqdm import tqdm
 
+use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']# 10 classes
+
 def flatten_list(l):
     for el in l:
         if isinstance(el, list):
@@ -45,6 +47,7 @@ def sen_gen(file):
     #state_list = ["new","old","dirty","clean","open","empty","full","hanging","half open/closed","half "]
     specify_words = ["see","touch","look","watch"]
     all_re = []
+    current_scene = "none"
     for f in file:
         color = []
         shape = []
@@ -173,14 +176,22 @@ def sen_gen(file):
             else:
                 first.insert(0,[comparative[0].split()[0]])
         token.extend(first)
+        token.append(".")
         if len(second) != 0:
             token.append("it is")
             token.extend(second)
+            token.append(".")
         
         #print(list(flatten_list(segment_token(token))))
         referring_expression = list(flatten_list(segment_token(token)))
         f["referring expression"] = " ".join(referring_expression)
-        f["tokens"] = referring_expression
+        f["re_tokens"] = referring_expression
+        f["q_tokens"] = f["question"].split()
+        if f["scene_id"] != current_scene:
+            ref_id = 0
+            current_scene = f["scene_id"]
+        f["ref_id"] = ref_id
+        ref_id = ref_id + 1
         all_re.append(f)
     
     unique_questions = duplicate_delection(all_re)
@@ -232,7 +243,7 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
             if none_restrictor == 1:
                 q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
                     "refer":ref_exp,"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
-                    "question_label":'None',"question":"no questions"}
+                    "question_label":'None',"question":"no questions ."}
                 questions.append(q)
         else:
             comparable = False
@@ -248,27 +259,27 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
                     "question_label":'comparative'}
 
                 if com_exp[0] == "bigger than":
-                    q["question"] = "is it the bigger one"
+                    q["question"] = "is it the bigger one ?"
                 elif com_exp[0] == "smaller than":
-                    q["question"] = "is it the smaller one"
+                    q["question"] = "is it the smaller one ?"
                 elif com_exp[0] == "higher than":
-                    q["question"] = "is it the higher one"
+                    q["question"] = "is it the higher one ?"
                 elif com_exp[0] == "lower than":
-                    q["question"] = "is it the lower one"
+                    q["question"] = "is it the lower one ?"
                 elif com_exp[0] == "messier than":
-                    q["question"] = "is it the messier one"
+                    q["question"] = "is it the messier one ?"
                 elif com_exp[0] == "cleaner than":
-                    q["question"] = "is it the cleaner one"
+                    q["question"] = "is it the cleaner one ?"
                 elif com_exp[0] == "fuller than":
-                    q["question"] = "is it the fuller one"
+                    q["question"] = "is it the fuller one ?"
                 elif com_exp[0] == "more closed":
-                    q["question"] = "is it the more closed one"
+                    q["question"] = "is it the more closed one ?"
                 elif com_exp[0] == "more open":
-                    q["question"] = "is it the open one"
+                    q["question"] = "is it the open one ?"
                 elif com_exp[0] == "brighter than":
-                    q["question"] = "is it the brighter one"
+                    q["question"] = "is it the brighter one ?"
                 elif com_exp[0] == "darker than":
-                    q["question"] = "is it the darker one"
+                    q["question"] = "is it the darker one ?"
                 else:
                     print(com_exp[0],"There is an error in the source code")
                 questions.append(q)
@@ -284,7 +295,7 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
 
                     q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
                         "refer":refer,"ids":target['id'],"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
-                        "question_label":'None',"question":"no questions"}
+                        "question_label":'None',"question":"no questions ."}
 
                     questions.append(q)
             else:
@@ -335,17 +346,17 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
                             "question_label":q_attribute}
 
                         if q_attribute == "color":
-                            q["question"] = " what is the color"
+                            q["question"] = "what is the color ?"
                         elif q_attribute == "size":
-                            q["question"] = " what is the size"
+                            q["question"] = "what is the size ?"
                         elif q_attribute == "shape":
-                            q["question"] = " what is the shape"
+                            q["question"] = "what is the shape ?"
                         elif q_attribute == "texture":
-                            q["question"] = " what is the texture"
+                            q["question"] = "what is the texture ?"
                         elif q_attribute == "material":
-                            q["question"] = " what is it made of"
+                            q["question"] = "what is it made of ?"
                         elif q_attribute == "relationships":
-                            q["question"] = " where is it"
+                            q["question"] = "where is it ?"
                         else:
                             print(q_attribute,"There is an error in the source code")    
                         questions.append(q)
@@ -382,7 +393,7 @@ def dataset_prepare(objects):
 
     for tar_object in tqdm(objects):
         tar_label = tar_object['label']
-        if all([tar_label != 'floor',tar_label != 'ceiling',tar_object['only'] == False]):
+        if all([tar_label != 'floor',tar_label != 'ceiling',tar_label in use_class,tar_object['only'] == False]):
             tar_n = objects.index(tar_object)
             attributes = tar_object['attributes']
             ref_exp = [tar_label]

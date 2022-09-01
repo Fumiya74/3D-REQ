@@ -19,6 +19,7 @@ def edit_objects(scenes):
             for other_obj in objects_list:
                 if object['label'] == other_obj['label'] and object['id'] != other_obj['id']:
                     object['only'] = False
+            #if object['label'] in ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']:#,'kitchen cabinet','window','bag','item','curtain','armchair','towel','light']:
             all_objects.append(object)
     
     return all_objects

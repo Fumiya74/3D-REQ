@@ -67,6 +67,7 @@ def main():
 
     q_list = []
     r_list = []
+    l_list = []
     r_dict = {}
     cuc = 0
     euc = 0
@@ -77,9 +78,10 @@ def main():
     token_length = 0
     none_token_length = 0
     none_count = 0
-
+    max_length = 0
     for q in questions:
         q_list.append(q['question_label'])
+        l_list.append(q["label"])
         r_dict["scene_id"] = q["scene_id"]
         r_dict["refer"] = q["refer"]
         r_list.append(copy.copy(r_dict))
@@ -88,17 +90,20 @@ def main():
         fuc = fuc + q["future uncertainty"]
         fr.writelines(q["referring expression"]+"\n")
         fq.writelines(q["question"]+"\n")
-        token_length = token_length + len(q["tokens"])
+        token_length = token_length + len(q["re_tokens"])
+        if max_length < len(q["re_tokens"]):
+            max_length = len(q["re_tokens"])
         if q["question_label"] == "None":
-            none_token_length = none_token_length + len(q["tokens"])
+            none_token_length = none_token_length + len(q["re_tokens"])
             none_count = none_count + 1
-
 
     fr.close()
     fq.close()
     f_stati.writelines('RE単語数平均:'+ str(token_length/len(questions)) + "\n")
+    f_stati.writelines('最大単語数:'+ str(max_length) + "\n")
     f_stati.writelines('質問がNoneになるときのRE単語数平均:'+ str(none_token_length/none_count) + "\n")
     question_rank = Counter(q_list)
+    label_rank = Counter(l_list)
     unique_refer_num = duplicate_delection2refer(r_list)
     #print(r_list)
     print('RE数:',len(questions))
@@ -106,7 +111,9 @@ def main():
     f_stati.writelines('RE数:'+ str(len(questions)) + "\n")
     #print(label_rank.most_common())
     print('質問の内訳:',question_rank.most_common())
+    print('ターゲットクラス内訳:',label_rank.most_common())
     f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
+    f_stati.writelines('ターゲットクラス内訳:'+ str(label_rank.most_common()) + "\n")
     print("現在の不確定性の平均：",cuc/len(questions),"質問後の不確定性の期待値の平均：",euc/len(questions),"質問後の不確定性の平均：",fuc/len(questions))
     f_stati.writelines("現在の不確定性の平均：" + str(cuc/len(questions)) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/len(questions)) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(questions)) + "\n")
     f_stati.close()
