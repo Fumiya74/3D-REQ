@@ -19,8 +19,21 @@ def segment_token(l):
             yield el.split()
 
 def duplicate_delection(questions):
-    unique_questions = list(map(json.loads, set(map(json.dumps, questions))))
+    unique_questions = []
+    #unique_questions = list(map(json.loads, set(map(json.dumps, questions))))
+    result = []
+    print("5/5 deleting dupulication")
+    for i in tqdm(questions):
+        if [i["scene_id"],i["referring expression"]] not in result:
+            result.append([i["scene_id"],i["referring expression"]])
+            unique_questions.append(i)
+
     return unique_questions
+
+def duplicate_delection2refer(refer):
+    unique_referring_expressions = []
+    unique_referring_expressions = list(map(json.loads, set(map(json.dumps, refer))))
+    return len(unique_referring_expressions)
 
 def sen_gen(file):
 
@@ -101,6 +114,11 @@ def sen_gen(file):
                 first.append(size)
             else:
                 second.append(size)
+        if texture != []:
+            if tex_rand == 1:
+                first.extend(texture)
+            else:
+                second.append(texture)
         if material != []:
             if mat_rand == 1 or len(second) != 0:
                 first.append(material)
@@ -115,11 +133,6 @@ def sen_gen(file):
                 
                 material.insert(0,"made of")
                 second.append(material)
-        if texture != []:
-            if tex_rand == 1:
-                first.extend(texture)
-            else:
-                second.append(texture)
         random.shuffle(first)
         first.append(f["label"])
         random.shuffle(second)
@@ -128,6 +141,7 @@ def sen_gen(file):
                 second[sec_idx].append("and")
         relationships_is_first = False
         if relationship != []:
+            expression_selector = random.randrange(2)
             if relationship[1] == f['label']:
                 relationship[1] = "the other"
             else:
@@ -138,6 +152,9 @@ def sen_gen(file):
                 relationship[0] = "on the left of"
             if relationship[0] == "front":
                 relationship[0] = "in front of"
+            if relationship[0] == "close by" and expression_selector == 1:
+                relationship[0] = "near"
+            
 
             if len(first) <= len(second)+1:
                 first.append(relationship)
@@ -213,7 +230,9 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
         if uncertainty == 0:
             none_restrictor = random.randrange(2)
             if none_restrictor == 1:
-                q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'None'}
+                q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
+                    "refer":ref_exp,"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
+                    "question_label":'None',"question":"no questions"}
                 questions.append(q)
         else:
             comparable = False
@@ -223,18 +242,50 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
                         com_exp = [compara[0]]
                         comparable = True
                                     
-            if comparable:
-                if com_exp[0] in ["bigger than","smaller than","higher than","lower than"]:
-                    q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'size'}
-                    questions.append(q) 
-                if com_exp[0] in ["darker than","brighter than"]:
-                    q = {"scene_id":target['scene_id'],"label":target['label'],"refer":ref_exp,"ids":distractor_list,"question":'color'}
-                    questions.append(q)
+            if comparable:               
+                q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
+                    "refer":ref_exp,"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
+                    "question_label":'comparative'}
+
+                if com_exp[0] == "bigger than":
+                    q["question"] = "is it the bigger one"
+                elif com_exp[0] == "smaller than":
+                    q["question"] = "is it the smaller one"
+                elif com_exp[0] == "higher than":
+                    q["question"] = "is it the higher one"
+                elif com_exp[0] == "lower than":
+                    q["question"] = "is it the lower one"
+                elif com_exp[0] == "messier than":
+                    q["question"] = "is it the messier one"
+                elif com_exp[0] == "cleaner than":
+                    q["question"] = "is it the cleaner one"
+                elif com_exp[0] == "fuller than":
+                    q["question"] = "is it the fuller one"
+                elif com_exp[0] == "more closed":
+                    q["question"] = "is it the more closed one"
+                elif com_exp[0] == "more open":
+                    q["question"] = "is it the open one"
+                elif com_exp[0] == "brighter than":
+                    q["question"] = "is it the brighter one"
+                elif com_exp[0] == "darker than":
+                    q["question"] = "is it the darker one"
+                else:
+                    print(com_exp[0],"There is an error in the source code")
+                questions.append(q)
+                questions.append(copy.copy(q))
+                questions.append(copy.copy(q))
+                questions.append(copy.copy(q))
+
+                
                 none_restrictor = 1 #必ず追加
                 if none_restrictor == 1:
                     refer = copy.copy(ref_exp)
-                    refer.append(com_exp)                         
-                    q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":target['id'],"question":'None'}
+                    refer.append(com_exp)          
+
+                    q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
+                        "refer":refer,"ids":target['id'],"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
+                        "question_label":'None',"question":"no questions"}
+
                     questions.append(q)
             else:
                 random.shuffle(unknown)
@@ -252,7 +303,7 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
                             tmp.extend(next_object['attributes'].get(unk_att,['None']))                   
                     tmp_c = Counter(tmp)
                     tmp_sum = [row[1] for row in tmp_c.most_common()]
-                    future_uncertainty = sum(list(map(lambda x:x**2, tmp_sum)))/(len(tmp))-1
+                    future_uncertainty = sum(list(map(lambda x:x**2, tmp_sum)))/(len(tmp)) - 1
                     if future_uncertainty <= min:
                         min = future_uncertainty
                         q_attribute = unk_att
@@ -261,18 +312,61 @@ def ref_gen(questions,tar_n,ref_exp,objects,known,unknown):
                     refer = copy.copy(ref_exp)
                     if q_attribute in ['relationships']:
                         if objects[tar_n][q_attribute] != []:
-                            next_ref_exp.extend([random.choice(objects[tar_n][q_attribute])])
+                            tar_relat = random.choice(objects[tar_n][q_attribute])
+                            next_ref_exp.extend([tar_relat])
                     else:
                         next_ref_exp.extend(objects[tar_n]['attributes'].get(q_attribute,[]))
                     if len(next_ref_exp) != ref_length:
                         unknown.remove(q_attribute)
-                        q = {"scene_id":target['scene_id'],"label":target['label'],"refer":refer,"ids":distractor_list,"question":q_attribute}
+
+
+                        #TODO
+                        next_uncertainty = 0
+                        for nexobj in next_objects:
+                            #print(nexobj)
+                            if q_attribute == "relationships":
+                                if tar_relat in nexobj[q_attribute]:
+                                    next_uncertainty = next_uncertainty + 1
+                            elif target["attributes"][q_attribute] == nexobj["attributes"].get(q_attribute,[None]):
+                                next_uncertainty = next_uncertainty + 1
+
+                        q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],\
+                            "refer":refer,"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":min,"future uncertainty":next_uncertainty-1,\
+                            "question_label":q_attribute}
+
+                        if q_attribute == "color":
+                            q["question"] = " what is the color"
+                        elif q_attribute == "size":
+                            q["question"] = " what is the size"
+                        elif q_attribute == "shape":
+                            q["question"] = " what is the shape"
+                        elif q_attribute == "texture":
+                            q["question"] = " what is the texture"
+                        elif q_attribute == "material":
+                            q["question"] = " what is it made of"
+                        elif q_attribute == "relationships":
+                            q["question"] = " where is it"
+                        else:
+                            print(q_attribute,"There is an error in the source code")    
                         questions.append(q)
                         if q_attribute == "color":
                             questions.append(copy.copy(q))
                             questions.append(copy.copy(q))
                             questions.append(copy.copy(q))
                         if q_attribute == "size":
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
+                        if q_attribute == "shape":
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
+                        if q_attribute == "texture":
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
+                        if q_attribute == "material":
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
+                            questions.append(copy.copy(q))
                             questions.append(copy.copy(q))
                                 
 
