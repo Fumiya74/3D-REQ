@@ -7,6 +7,7 @@ from id2bbox import bboxTransform
 #import tensorflow_datasets as tfds
 
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
+used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
 scan_path = "/home/fumiya/matsu/3RScan/Scans/"
 datasets_path = "../../data/datasets/"
 question_path = "../../data/question.json"
@@ -16,6 +17,10 @@ scan_info_path = "../../data/3RScan.json"
 scan_json = open(scan_info_path,"r")
 scan_file = json.load(scan_json)
 scene2id_path = "../../data/id2scene_ref.json"
+id2word_path = "../../data/id2word.json"
+use_class_path = "../../data/used_classses.json"
+
+
 
 splits = ["train", "val", "test"]
 split_dict = {}
@@ -51,12 +56,17 @@ for word in tokens:
         id = len(word2id) + 1
         word2id[word] = id
         id2word[id] = word
+with open(use_class_path,'w') as outfile:
+    json.dump(used_classes, outfile, indent=2)
+with open(id2word_path,'w') as outfile:
+    json.dump(id2word, outfile, indent=2)
 
 #encoder = tfds.features.text.TokenTextEncoder(vocab_list,lowercase=True)
 print(word2id)
 #単語数は30
 file_id = 0
 file_id_dict = {}
+"""
 for q in tqdm(q_file):###TODO###
     #if q["scene_id"] not in ["7272e184-a01b-20f6-8a46-2583655fdd6d"]:
     semseg_path = scan_path + q["scene_id"] +"/semseg.v2.json"
@@ -108,9 +118,10 @@ for q in tqdm(q_file):###TODO###
 
         file_id = file_id + 1
 
-        np.save(bbox_path,np.array(bboxes))
-        np.savez(caption_path,encoded_re)
-        np.savez(question_path,encoded_q)
+        #np.save(bbox_path,np.array(bboxes))
+        #np.savez(caption_path,encoded_re)
+        #np.savez(question_path,encoded_q)
 
 with open(scene2id_path,'w') as outfile:
     json.dump(file_id_dict, outfile, indent=2)
+"""
