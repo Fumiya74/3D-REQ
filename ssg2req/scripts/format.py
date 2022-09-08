@@ -160,9 +160,14 @@ for q in tqdm(q_file):###TODO###
                 bbox = (bboxTransform(s))
                 bbox.append(use_class.index(q["label"]))
                 bboxes.append(bbox)
+        for bp in bbox[3:6]:
+            if bp <= 0:
+                print("Length is less than 0:",file_id)
 
+        if bbox[7] >  9 or bbox[7] < 0:
+            print("Out of range of class label.:",file_id)
         file_id = file_id + 1
-
+        
         #np.save(bbox_path,np.array(bboxes))
         #np.savez(caption_path,encoded_re)
         #np.savez(question_path,encoded_q)

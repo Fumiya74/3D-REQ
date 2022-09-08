@@ -21,6 +21,14 @@ for scan in tqdm(all_scans):
 
     new_pcd[:,0:3] = aps_xyz[choices]
     new_pcd[:,3:6] = aps_rgb[choices]
-    output + "/" + os.path.basename(scan)
+    if new_pcd.shape != (50000,6):
+        print("Size Error")
+
+    #Convert sampled point cloud to .ply format
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(new_pcd[:,:3])
+    pcd.colors = o3d.utility.Vector3dVector(new_pcd[:,3:6])
+    o3d.io.write_point_cloud(os.path.join(scan,"test.ply"), pcd)
+    #output + "/" + os.path.basename(scan)
     #print(output + "/" + os.path.basename(scan))
-    np.savez(output + "/" + os.path.basename(scan), pc=new_pcd)
+    #np.savez(output + "/" + os.path.basename(scan), pc=new_pcd)
