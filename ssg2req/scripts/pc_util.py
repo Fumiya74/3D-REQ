@@ -756,7 +756,7 @@ def regulatePLY(pc):
   return pcd
     
 
-def write_lines_as_cylinders(pcl, filename, color=[153,204,0,0], rad=0.02, res=64):
+def write_lines_as_cylinders(pcl, filename, color, rad=0.02, res=64):
     """Create lines represented as cylinders connecting pairs of 3D points
     Args:
         pcl: (N x 2 x 3 numpy array): N pairs of xyz pos             
@@ -788,7 +788,7 @@ def write_lines_as_cylinders(pcl, filename, color=[153,204,0,0], rad=0.02, res=6
       meshes_out.append(mesh)
     """
     mesh_list = trimesh.util.concatenate(meshes)
-    trimesh.io.export.export_mesh(mesh_list, '%s.ply'%(filename), file_type='ply')
+    mesh_list.export('%s.ply'%(filename), file_type='ply')
 
 """
 # ----------------------------------------
