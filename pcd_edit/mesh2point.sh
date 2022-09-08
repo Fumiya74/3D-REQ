@@ -1,8 +1,8 @@
 #!/bin/sh
-
+#https://github.com/Fumiya74/CyREx/blob/develop/pcd_edit/mesh2point.sh
 dir_path="/home/fumiya/matsu/3RScan/data/3RScan/*"
 #dirs= find $dir_path -maxdepth 0 -type d
-
+#メッシュ表面から80000点をランダムサンプリング
 for dir in $(find $dir_path -maxdepth 0 -type d);
 do
     echo $dir
