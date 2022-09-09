@@ -30,5 +30,5 @@ for scan in tqdm(all_scans):
     pcd.colors = o3d.utility.Vector3dVector(new_pcd[:,3:6])
     o3d.io.write_point_cloud(os.path.join(scan,"test.ply"), pcd)
     output + "/" + os.path.basename(scan)
-    print(output + "/" + os.path.basename(scan))
+    #print(output + "/" + os.path.basename(scan))
     np.savez(output + "/" + os.path.basename(scan), pc=new_pcd)
