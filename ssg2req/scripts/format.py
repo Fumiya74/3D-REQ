@@ -93,6 +93,8 @@ token_length = 0
 none_token_length = 0
 none_count = 0
 max_length = 0
+max_bbox_num = 0
+min_bbox_num = 100
 for q in tqdm(q_file):###TODO###
     #if q["scene_id"] not in ["7272e184-a01b-20f6-8a46-2583655fdd6d"]:
     semseg_path = scan_path + q["scene_id"] +"/semseg.v2.json"
@@ -152,25 +154,37 @@ for q in tqdm(q_file):###TODO###
 
         encoded_q = np.pad(np.array(encoded_q), [(0,30-len(encoded_q))])
         encoded_re = np.pad(np.array(encoded_re), [(0,30-len(encoded_re))])
-
+        if isinstance(q["ids"],list):
+            qids = q["ids"]
+        else:
+            qids = [q["ids"]]
+        if file_id == 1443:
+            print(q["ids"])
         for s in semseg["segGroups"]:
-            if str(s["id"]) in q["ids"]:
+            if str(s["id"]) in qids: #["21"]
+                if file_id == 1443:
+                    print("DEBUG: ",s["id"])    
                 #print(s)
                 ##########
                 bbox = (bboxTransform(s))
                 bbox.append(use_class.index(q["label"]))
                 bboxes.append(bbox)
         for bp in bbox[3:6]:
+            bp = bp/2
             if bp <= 0:
                 print("Length is less than 0:",file_id)
 
         if bbox[7] >  9 or bbox[7] < 0:
             print("Out of range of class label.:",file_id)
         file_id = file_id + 1
-        
-        #np.save(bbox_path,np.array(bboxes))
-        #np.savez(caption_path,encoded_re)
-        #np.savez(question_path,encoded_q)
+        if len(bboxes) > max_bbox_num:
+            max_bbox_num = len(bboxes)
+        if len(bboxes) < min_bbox_num:
+            min_bbox_num = len(bboxes)
+        np.save(bbox_path,np.array(bboxes))
+        np.savez(caption_path,encoded_re)
+        np.savez(question_path,encoded_q)
+print("max:",max_bbox_num,"\nmin:",min_bbox_num)
 f_stati.writelines('RE単語数平均:'+ str(token_length/c) + "\n")
 f_stati.writelines('最大単語数:'+ str(max_length) + "\n")
 f_stati.writelines('質問がNoneになるときのRE単語数平均:'+ str(none_token_length/none_count) + "\n")
