@@ -1,7 +1,7 @@
 # CyREx(Clarify your Referring Expression):Dialog Generation for Uncertainty Elimination in 3D Grounding
 
-##Project
-```
+## Project 
+``` 
 ┣- 3RScan/
 ┣- data/
   ┗ datasets/
