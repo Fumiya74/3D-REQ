@@ -31,8 +31,3 @@ i = 0
 for bbox in bboxes:
     write_lines_as_cylinders(bbox,'test'+str(i), color=[random.randint(0,255),random.randint(0,255),random.randint(0,255),0])
     i = i+1
-
-
-
-
-
