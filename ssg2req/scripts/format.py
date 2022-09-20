@@ -188,9 +188,9 @@ for q in tqdm(q_file):###TODO###
             max_bbox_num = len(bboxes)
         if len(bboxes) < min_bbox_num:
             min_bbox_num = len(bboxes)
-        #np.save(bbox_path,np.array(bboxes))
-        #np.savez(caption_path,encoded_re)
-        #np.savez(question_path,encoded_q)
+        np.save(bbox_path,np.array(bboxes))
+        np.savez(caption_path,encoded_re)
+        np.savez(question_path,encoded_q)
 s_train = list(set(s_train))
 s_val = list(set(s_val))
 s_test = list(set(s_test))
