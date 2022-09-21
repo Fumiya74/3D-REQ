@@ -25,6 +25,8 @@ scene2id_path = "../../data/id2scene_ref.json"
 id2word_path = "../../data/id2word.json"
 use_class_path = "../../data/used_classses.json"
 stat = "../../data/used_dataset_statistics.txt"
+test_mesh_path = "/home/fumiya/matsu/3RScan/splits/test_mesh/"
+test_pcd_path = "/home/fumiya/matsu/3RScan/splits/test_pcd/"
 
 kotoba = []
 
@@ -80,13 +82,14 @@ print(word2id)
 file_id = 0
 file_id_dict = {}
 scenes = []
+
 c = 0
-cuc = 0
-euc = 0
-fuc = 0
-q_list = []
-r_list = []
-l_list = []
+c_train, c_val, c_test = 0,0,0
+cuc,euc,fuc = 0,0,0
+
+q_list,r_list,l_list = [],[],[]
+s_train, s_val, s_test = [],[],[]
+
 r_dict = {}
 f_stati = open(stat,"w")
 token_length = 0
@@ -105,12 +108,18 @@ for q in tqdm(q_file):###TODO###
         if q["scene_id"] in split_dict["train"]:
             splited_path = "train/"
             split_id = 0
+            c_train = c_train+1
+            s_train.append(q["scene_id"])
         elif q["scene_id"] in split_dict["val"]:
             splited_path = "val/"
             split_id = 1
+            c_val = c_val+1
+            s_val.append(q["scene_id"])
         elif q["scene_id"] in split_dict["test"]:
             splited_path = "test/"
             split_id = 2
+            c_test = c_test+1
+            s_test.append(q["scene_id"])
         else:
             print(q["scene_id"])
 
@@ -129,7 +138,6 @@ for q in tqdm(q_file):###TODO###
         if q["question_label"] == "None":
             none_token_length = none_token_length + len(q["re_tokens"])
             none_count = none_count + 1
-
 
         file_id_dict[file_id] = {"scene_id":q["scene_id"],"ref_id":q["ref_id"],"split":split_id}
         caption_path = datasets_path  + splited_path + f'{file_id:06}' + "_captions.npz"
@@ -158,14 +166,13 @@ for q in tqdm(q_file):###TODO###
             qids = q["ids"]
         else:
             qids = [q["ids"]]
-        if file_id == 1443:
-            print(q["ids"])
+        #if file_id == 1443:
+            #print(q["ids"])
         for s in semseg["segGroups"]:
             if str(s["id"]) in qids: #["21"]
-                if file_id == 1443:
-                    print("DEBUG: ",s["id"])    
-                #print(s)
-                ##########
+                #if file_id == 1443:
+                    #print("DEBUG: ",s["id"])    
+
                 bbox = (bboxTransform(s))
                 bbox.append(use_class.index(q["label"]))
                 bboxes.append(bbox)
@@ -184,6 +191,9 @@ for q in tqdm(q_file):###TODO###
         np.save(bbox_path,np.array(bboxes))
         np.savez(caption_path,encoded_re)
         np.savez(question_path,encoded_q)
+s_train = list(set(s_train))
+s_val = list(set(s_val))
+s_test = list(set(s_test))
 print("max:",max_bbox_num,"\nmin:",min_bbox_num)
 f_stati.writelines('RE単語数平均:'+ str(token_length/c) + "\n")
 f_stati.writelines('最大単語数:'+ str(max_length) + "\n")
@@ -191,6 +201,12 @@ f_stati.writelines('質問がNoneになるときのRE単語数平均:'+ str(none
 unique_refer_num = duplicate_delection2refer(r_list)
 f_stati.writelines('RE内容数（文法の違いを含まない）:'+ str(unique_refer_num) + "\n")
 f_stati.writelines('RE数:'+ str(c) + "\n")
+f_stati.writelines('train_scenes:'+ str(len(s_train)) + "\n")
+f_stati.writelines('val_scenes:'+ str(len(s_val)) + "\n")
+f_stati.writelines('test_scenes:'+ str(len(s_test)) + "\n")
+f_stati.writelines('train_re:'+ str(c_train) + "\n")
+f_stati.writelines('val_re:'+ str(c_val) + "\n")
+f_stati.writelines('test_re:'+ str(c_test) + "\n")
 word_chain = ' '.join(kotoba)
 wc = WordCloud(background_color = "white",max_font_size=40,collocations = False).generate(word_chain)
 wc.to_file("../../data/wc.png")
@@ -202,3 +218,8 @@ f_stati.writelines("現在の不確定性の平均：" + str(cuc/c) + "\n" + "�
 f_stati.close()
 with open(scene2id_path,'w') as outfile:
     json.dump(file_id_dict, outfile, indent=2)
+
+"""
+for origin in s_test:
+    mesh_path = scan_path + origin + "/mesh.refined.v2.obj"
+"""

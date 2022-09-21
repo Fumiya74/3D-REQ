@@ -24,7 +24,7 @@ relationships_file = json.load(relationships_json)
 relationships_list = [1,2,3,4,5,6,7,14,15,16,17,18,19,23,24,25,26]
 bidirectional_list = [6,18]
 comparatives_list = [8,9,10,11,33,34,35,36,37,38,39]
-
+use_class_ids = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","16","24","28","33","34","36","39"]
 def main():
     print("1/5 editting object.json")
     objects = edit_objects(objects_file["scans"])
@@ -39,7 +39,7 @@ def main():
             if scene1["scene_id"] == object["scene_id"]:
                 for relationship in scene1["relationships"]:
                     if str(relationship[0]) == object['id']:   
-                        if relationship[4] not in scene1['no_anchor_class']:
+                        if relationship[4] not in scene1['no_anchor_class'] and relationship[5] in use_class_ids: 
                             if object['label'] != relationship[4] or relationship[2] not in bidirectional_list:
 
                                 object_relationships.append([relationship[3],relationship[4]])
