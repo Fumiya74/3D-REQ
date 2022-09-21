@@ -11,7 +11,7 @@ def edit_objects(scenes):
         for object in objects_list:
             object['scene_id'] = scene_id
             object.pop('ply_color')
-            object.pop('nyu40')
+            #object.pop('nyu40')
             object.pop('eigen13')
             object.pop('rio27')
             object.pop('affordances',None)
@@ -70,6 +70,7 @@ def edit_relationships(rel_scenes,objects,r_list):
                     for object2 in objects_list:
                         if str(relationship[1]) == object2['id']:
                             relationship.append(object2['label'])
+                            relationship.append(object2["nyu40"])
                             relationships_list.append(relationship)
                 scene_dict['relationships'] = relationships_list
         if relexist:
