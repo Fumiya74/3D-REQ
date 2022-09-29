@@ -24,7 +24,9 @@ relationships_file = json.load(relationships_json)
 relationships_list = [1,2,3,4,5,6,7,14,15,16,17,18,19,23,24,25,26]
 bidirectional_list = [6,18]
 comparatives_list = [8,9,10,11,33,34,35,36,37,38,39]
-use_class_ids = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","16","24","28","33","34","36","39"]
+use_class_ids = ["1","2","3","4","5","6","7","8","9","10","11","12","14","16","24","28","33","34","36","39"]
+nyu40 = ["cabinet", "bed", "chair", "sofa", "table", "door", "window", "bookshelf", "picture", "counter", "desk", "curtain", "refridgerator", "shower_curtain", "toilet", "sink", "bathtub", "otherfurniture"]
+nyu40_dict = {"3":"cabinet", "4":"bed", "5":"chair", "6":"sofa", "7":"table", "8":"door", "9":"window", "10":"bookshelf", "11":"picture", "12":"counter", "14":"desk", "16":"curtain", "24":"refridgerator", "28":"shower_curtain", "33":"toilet", "34":"sink", "36":"bathtub", "39":"otherfurniture"}
 def main():
     print("1/5 editting object.json")
     objects = edit_objects(objects_file["scans"])
@@ -80,8 +82,8 @@ def main():
     none_count = 0
     max_length = 0
     for q in questions:
-        q_list.append(q['question_label'])
-        l_list.append(q["label"])
+        q_list.extend(q['question_label'])
+        l_list.append(nyu40_dict[q["nyu40"]])
         r_dict["scene_id"] = q["scene_id"]
         r_dict["refer"] = q["refer"]
         r_list.append(copy.copy(r_dict))
@@ -89,11 +91,11 @@ def main():
         euc = euc + q["expected uncertainty"]
         fuc = fuc + q["future uncertainty"]
         fr.writelines(q["referring expression"]+"\n")
-        fq.writelines(q["question"]+"\n")
+        #fq.writelines(q["question"]+"\n")
         token_length = token_length + len(q["re_tokens"])
         if max_length < len(q["re_tokens"]):
             max_length = len(q["re_tokens"])
-        if q["question_label"] == "None":
+        if q["question_label"] == ["None"]:
             none_token_length = none_token_length + len(q["re_tokens"])
             none_count = none_count + 1
 
@@ -111,6 +113,7 @@ def main():
     f_stati.writelines('RE数:'+ str(len(questions)) + "\n")
     #print(label_rank.most_common())
     print('質問の内訳:',question_rank.most_common())
+    f_stati.writelines('質問総数:'+ str(len(q_list)) + "\n")
     print('ターゲットクラス内訳:',label_rank.most_common())
     f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
     f_stati.writelines('ターゲットクラス内訳:'+ str(label_rank.most_common()) + "\n")
