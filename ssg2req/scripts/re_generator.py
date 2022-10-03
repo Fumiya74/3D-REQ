@@ -274,7 +274,7 @@ def ref_gen(questions,tar_n,ref_exp,s_relat,objects,unknown):
             none_restrictor = random.randrange(2)
             if none_restrictor == 1:
                 q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],"nyu40":nyu_id ,\
-                    "refer":ref_exp,"relationship":s_relat,"comparative":[],"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
+                    "refer":ref_exp,"relationship":s_relat,"comparative":[],"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":[0],\
                     "question_label":['None'],"question":["no questions ."]}
                 questions.append(q)
         else:
@@ -337,7 +337,7 @@ def ref_gen(questions,tar_n,ref_exp,s_relat,objects,unknown):
                     #refer.append(com_exp[0])          
                     random.shuffle(com_exp)
                     q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],"nyu40":nyu_id ,\
-                        "refer":refer,"relationship":s_relat,"comparative":com_exp[0],"ids":target['id'],"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":0,\
+                        "refer":refer,"relationship":s_relat,"comparative":com_exp[0],"ids":target['id'],"current uncertainty":uncertainty,"expected uncertainty":0,"future uncertainty":[0],\
                         "question_label":['None'],"question":["no questions ."]}
 
                     questions.append(q)
@@ -431,12 +431,12 @@ def ref_gen(questions,tar_n,ref_exp,s_relat,objects,unknown):
                             print(q_att,"There is an error in the source code") 
                         #questionsに追加するのは最初だけ 
 
-                    if first:  
-                        q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],"nyu40":nyu_id ,\
-                            "refer":refer,"relationship":s_relat,"comparative":[],"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":min,"future uncertainty":next_uncertainty_list,\
-                            "question_label":q_list,"question":qs_list}
-                        questions.append(q)
-                        first = False
+                        if first:  
+                            q = {"target_id":target["id"],"scene_id":target['scene_id'],"label":target['label'],"nyu40":nyu_id ,\
+                                "refer":refer,"relationship":s_relat,"comparative":[],"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":min,"future uncertainty":next_uncertainty_list,\
+                                "question_label":q_list,"question":qs_list}
+                            questions.append(q)
+                            first = False
                         """
                         if q_attribute == "color":
                             questions.append(copy.copy(q))

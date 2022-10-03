@@ -65,8 +65,6 @@ def main():
     with open(out_path,'w') as outfile:
         json.dump(questions, outfile, indent=2)
 
-    
-
     q_list = []
     r_list = []
     l_list = []
@@ -86,10 +84,16 @@ def main():
         l_list.append(nyu40_dict[q["nyu40"]])
         r_dict["scene_id"] = q["scene_id"]
         r_dict["refer"] = q["refer"]
+        ###TODO
+        r_dict["label"] = q["label"]
+        r_dict["relationship"] = q["relationship"]
+        r_dict["comparative"] = q["comparative"]
         r_list.append(copy.copy(r_dict))
         cuc = cuc + q["current uncertainty"]
         euc = euc + q["expected uncertainty"]
-        fuc = fuc + q["future uncertainty"]
+        #print(q["future uncertainty"])
+        for qfuc in q["future uncertainty"]:
+            fuc = fuc + qfuc
         fr.writelines(q["referring expression"]+"\n")
         #fq.writelines(q["question"]+"\n")
         token_length = token_length + len(q["re_tokens"])
@@ -117,7 +121,7 @@ def main():
     print('ターゲットクラス内訳:',label_rank.most_common())
     f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
     f_stati.writelines('ターゲットクラス内訳:'+ str(label_rank.most_common()) + "\n")
-    print("現在の不確定性の平均：",cuc/len(questions),"質問後の不確定性の期待値の平均：",euc/len(questions),"質問後の不確定性の平均：",fuc/len(questions))
+    print("現在の不確定性の平均：",cuc/len(questions),"質問後の不確定性の期待値の平均：",euc/len(questions),"質問後の不確定性の平均：",fuc/len(q_list))
     f_stati.writelines("現在の不確定性の平均：" + str(cuc/len(questions)) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/len(questions)) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(questions)) + "\n")
     f_stati.close()
 
