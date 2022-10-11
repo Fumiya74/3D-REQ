@@ -56,7 +56,8 @@ q_label = []
 for q in tqdm(q_file):
 
     tokens.extend(q["re_tokens"])
-    tokens.extend(q["q_tokens"])
+    for qt in q["re_tokens"]:
+        tokens.extend(qt)
     
 
 tokens.append("<start>")
