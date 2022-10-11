@@ -124,21 +124,23 @@ for q in tqdm(q_file):###TODO###
             print(q["scene_id"])
 
         ###CHANGE###    
-        q_label.append(q["question_label"])
+        q_label.extend(q["question_label"])
         kotoba.extend(q["re_tokens"])
         cuc = cuc + q["current uncertainty"]
         euc = euc + q["expected uncertainty"]
-        fuc = fuc + q["future uncertainty"]
+        for qfuc in q["future uncertainty"]:
+            fuc = fuc + qfuc
         r_dict["scene_id"] = q["scene_id"]
         r_dict["refer"] = q["refer"]
         r_list.append(copy.copy(r_dict))
         token_length = token_length + len(q["re_tokens"])
         if max_length < len(q["re_tokens"]):
             max_length = len(q["re_tokens"])
+        """
         if q["question_label"] == "None":
             none_token_length = none_token_length + len(q["re_tokens"])
             none_count = none_count + 1
-
+        """
         file_id_dict[file_id] = {"scene_id":q["scene_id"],"ref_id":q["ref_id"],"split":split_id}
         caption_path = datasets_path  + splited_path + f'{file_id:06}' + "_captions.npz"
         bbox_path = datasets_path  + splited_path + f'{file_id:06}' + "_bbox.npy"
@@ -197,7 +199,7 @@ s_test = list(set(s_test))
 print("max:",max_bbox_num,"\nmin:",min_bbox_num)
 f_stati.writelines('RE単語数平均:'+ str(token_length/c) + "\n")
 f_stati.writelines('最大単語数:'+ str(max_length) + "\n")
-f_stati.writelines('質問がNoneになるときのRE単語数平均:'+ str(none_token_length/none_count) + "\n")
+#f_stati.writelines('質問がNoneになるときのRE単語数平均:'+ str(none_token_length/none_count) + "\n")
 unique_refer_num = duplicate_delection2refer(r_list)
 f_stati.writelines('RE内容数（文法の違いを含まない）:'+ str(unique_refer_num) + "\n")
 f_stati.writelines('RE数:'+ str(c) + "\n")
@@ -214,7 +216,7 @@ question_rank = Counter(q_label)
 print('質問の内訳:',question_rank.most_common())
 f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
 print("使用したScan数:",len(list(set(scenes))))
-f_stati.writelines("現在の不確定性の平均：" + str(cuc/c) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/c) + "\n" + "質問後の不確定性の平均：" + str(fuc/c) + "\n")
+f_stati.writelines("現在の不確定性の平均：" + str(cuc/c) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/c) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(q_list)) + "\n")
 f_stati.close()
 with open(scene2id_path,'w') as outfile:
     json.dump(file_id_dict, outfile, indent=2)
