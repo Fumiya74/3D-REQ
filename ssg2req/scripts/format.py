@@ -13,7 +13,7 @@ from re_generator import dataset_prepare, duplicate_delection2refer
 
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
 used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
-scan_path = "/home/fumiya/matsu/3RScan/data/3RScan/"
+scan_path = "/../../../3RScan/data/3RScan/"
 datasets_path = "../../data/datasets/"
 question_path = "../../data/question.json"
 questions_json = open(question_path,"r")
