@@ -7,8 +7,10 @@ from tqdm import tqdm
 full = ["empty","full","half full/empty"]
 open = ["half open/closed", "open", "closed"]
 #use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']# 10 classes
-use_class_ids = ["1","2","3","4","5","6","7","8","9","10","11","12","14","16","24","28","33","34","36","39"] # 20 classes (NYU40)
-nyu40 = ["cabinet", "bed", "chair", "sofa", "table", "door", "window", "bookshelf", "picture", "counter", "desk", "curtain", "refridgerator", "shower_curtain", "toilet", "sink", "bathtub", "otherfurniture"]
+#use_class_ids = ["1","2","3","4","5","6","7","8","9","10","11","12","14","16","24","28","33","34","36","39"] # 20 classes (NYU40)
+#nyu40 = ["cabinet", "bed", "chair", "sofa", "table", "door", "window", "bookshelf", "picture", "counter", "desk", "curtain", "refridgerator", "shower_curtain", "toilet", "sink", "bathtub", "otherfurniture"]
+nyu40 = ["cabinet", "chair",  "table"]
+use_class_ids = ["3","5","7"]
 def flatten_list(l):
     for el in l:
         if isinstance(el, list):
@@ -490,6 +492,8 @@ def ref_gen(questions,tar_n,ref_exp,s_relat,objects,unknown):
                             "refer":refer,"relationship":s_relat,"comparative":[],"ids":distractor_list,"current uncertainty":uncertainty,"expected uncertainty":min,"future uncertainty":next_uncertainty_list,\
                             "question_label":q_list,"question":qs_list}
                         questions.append(q)
+                        questions.append(copy.copy(q))
+                        
                         first = False
                     """
                     if q_attribute == "color":

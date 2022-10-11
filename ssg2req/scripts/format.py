@@ -13,7 +13,8 @@ from re_generator import dataset_prepare, duplicate_delection2refer
 
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
 used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
-scan_path = "/../../../3RScan/data/3RScan/"
+#Macbook
+scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
 datasets_path = "../../data/datasets/"
 question_path = "../../data/question.json"
 questions_json = open(question_path,"r")
@@ -56,7 +57,7 @@ q_label = []
 for q in tqdm(q_file):
 
     tokens.extend(q["re_tokens"])
-    for qt in q["re_tokens"]:
+    for qt in q["q_tokens"]:
         tokens.extend(qt)
     
 
@@ -123,7 +124,7 @@ for q in tqdm(q_file):###TODO###
             s_test.append(q["scene_id"])
         else:
             print(q["scene_id"])
-
+        q_list.extend(q["question_label"])
         ###CHANGE###    
         q_label.extend(q["question_label"])
         kotoba.extend(q["re_tokens"])
@@ -133,6 +134,9 @@ for q in tqdm(q_file):###TODO###
             fuc = fuc + qfuc
         r_dict["scene_id"] = q["scene_id"]
         r_dict["refer"] = q["refer"]
+        r_dict["label"] = q["label"]
+        r_dict["relationship"] = q["relationship"]
+        r_dict["comparative"] = q["comparative"]
         r_list.append(copy.copy(r_dict))
         token_length = token_length + len(q["re_tokens"])
         if max_length < len(q["re_tokens"]):
@@ -152,19 +156,25 @@ for q in tqdm(q_file):###TODO###
         #encoded_re = encoder.encode(q["referring expression"])
         #encoded_q = encoder.encode(q["question"])
         #[単語数,<start>, , , ,<end>,<pad>,,,]
-        encoded_q = [len(q["q_tokens"]),word2id["<start>"]]
+        
         encoded_re = [len(q["re_tokens"]),word2id["<start>"]]
+        encoded_qs = []
 
-        for q_word in q["q_tokens"]:
-            encoded_q.append(word2id[q_word])
+       
         for re_word in q["re_tokens"]:
             encoded_re.append(word2id[re_word])
-        
-        encoded_q.append(word2id["<end>"])
         encoded_re.append(word2id["<end>"])
-
-        encoded_q = np.pad(np.array(encoded_q), [(0,30-len(encoded_q))])
         encoded_re = np.pad(np.array(encoded_re), [(0,30-len(encoded_re))])
+
+        for q_words in q["q_tokens"]:
+            encoded_q = [len(q["q_tokens"]),word2id["<start>"]]
+            for q_word in q_words:
+                encoded_q.append(word2id[q_word])
+            encoded_q.append(word2id["<end>"])
+            encoded_q = np.pad(np.array(encoded_q), [(0,30-len(encoded_q))])
+            encoded_qs.append(encoded_q)
+        
+        
         if isinstance(q["ids"],list):
             qids = q["ids"]
         else:
@@ -177,15 +187,15 @@ for q in tqdm(q_file):###TODO###
                     #print("DEBUG: ",s["id"])    
 
                 bbox = (bboxTransform(s))
-                bbox.append(use_class.index(q["label"]))
+                bbox.append(int(q["nyu40"]))
                 bboxes.append(bbox)
         for bp in bbox[3:6]:
             bp = bp/2
             if bp <= 0:
                 print("Length is less than 0:",file_id)
 
-        if bbox[7] >  9 or bbox[7] < 0:
-            print("Out of range of class label.:",file_id)
+        #if bbox[7] >  9 or bbox[7] < 0:
+            #print("Out of range of class label.:",file_id)
         file_id = file_id + 1
         if len(bboxes) > max_bbox_num:
             max_bbox_num = len(bboxes)
@@ -193,7 +203,7 @@ for q in tqdm(q_file):###TODO###
             min_bbox_num = len(bboxes)
         np.save(bbox_path,np.array(bboxes))
         np.savez(caption_path,encoded_re)
-        np.savez(question_path,encoded_q)
+        np.savez(question_path,encoded_qs)
 s_train = list(set(s_train))
 s_val = list(set(s_val))
 s_test = list(set(s_test))
@@ -217,6 +227,7 @@ question_rank = Counter(q_label)
 print('質問の内訳:',question_rank.most_common())
 f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
 print("使用したScan数:",len(list(set(scenes))))
+print("c",c)
 f_stati.writelines("現在の不確定性の平均：" + str(cuc/c) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/c) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(q_list)) + "\n")
 f_stati.close()
 with open(scene2id_path,'w') as outfile:
