@@ -1,7 +1,9 @@
 from tqdm import tqdm
 import copy
 from collections import Counter
-
+full = ["empty","full","half full/empty"]
+open = ["half open/closed", "open", "closed"]
+hanging = ["hanging"]
 def edit_objects(scenes):
    
     all_objects = []
@@ -16,6 +18,21 @@ def edit_objects(scenes):
             object.pop('rio27')
             object.pop('affordances',None)
             object['only'] = True
+            s_list = []
+            full_list = []
+            open_list = []
+            state = object["attributes"].get('state',[])
+            if state != []:
+                #この２種類以外のstateが入っていた場合、空リストが格納される
+                for s in state:
+                    if s in full:
+                        full_list.append(s)
+                    if s in open:
+                        open_list.append(s)
+                if full_list != []:
+                    object["attributes"]["full"] = full_list
+                if open_list != []:
+                    object["attributes"]["open"] = open_list
             for other_obj in objects_list:
                 if object['label'] == other_obj['label'] and object['id'] != other_obj['id']:
                     object['only'] = False
@@ -77,9 +94,3 @@ def edit_relationships(rel_scenes,objects,r_list):
             all_scenes2.append(scene_dict.copy())
         
     return all_scenes2
-
-
-    
-
-
-

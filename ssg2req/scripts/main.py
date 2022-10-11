@@ -122,7 +122,7 @@ def main():
     f_stati.writelines('質問の内訳:'+ str(question_rank.most_common()) + "\n")
     f_stati.writelines('ターゲットクラス内訳:'+ str(label_rank.most_common()) + "\n")
     print("現在の不確定性の平均：",cuc/len(questions),"質問後の不確定性の期待値の平均：",euc/len(questions),"質問後の不確定性の平均：",fuc/len(q_list))
-    f_stati.writelines("現在の不確定性の平均：" + str(cuc/len(questions)) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/len(questions)) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(questions)) + "\n")
+    f_stati.writelines("現在の不確定性の平均：" + str(cuc/len(questions)) + "\n" + "質問後の不確定性の期待値の平均："+ str(euc/len(questions)) + "\n" + "質問後の不確定性の平均：" + str(fuc/len(q_list)) + "\n")
     f_stati.close()
 
 if __name__ == "__main__": main()
