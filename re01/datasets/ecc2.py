@@ -47,24 +47,20 @@ DATA_PATH_V2 = "" ## Not used in the codebase.
 class ECCDatasetConfig(object):
     def __init__(self):
         # change2ids = {'add':0,'delete':1,'open_b':2,'open_a':3,'close_b':4,'close_a':5,'move_b':6, 'move_a':7}
-        #self.num_semcls = 10  ####
-        #self.num_objsemcls = 10
-        self.num_semcls = 3  ####
-        self.num_objsemcls = 3 ##TODO##
+        self.num_semcls = 10  ####
+        self.num_objsemcls = 10 ##TODO##
         self.num_angle_bin = 12   ####
         self.max_num_obj = 15  ####################TODO######################
         self.vocab_size = 216 ##TODO##
         
         #self.obj2class = {'Microwave': 0, 'HousePlant': 1, 'GarbageCan': 2, 'Stool': 3, 'Chair': 4, 'SideTable': 5, 'DiningTable': 6, 'Television': 7, 'FloorLamp': 8, 'ArmChair': 9, 'CoffeeTable': 10, 'Sofa': 11, 'Desk': 12, 'Dresser': 13, 'Bed': 14, 'CoffeeMachine': 15, 'Laptop': 16, 'DeskLamp': 17, 'Plunger': 18, 'Fridge': 19, 'Toilet': 20} ##TODO##
-        #self.obj2class = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
-        self.obj2class = {'cabinet': 3,'chair': 5,'chair': 7}
-        self.type2class = {'cabinet': 3,'chair': 5,'chair': 7}
-        #self.type2class = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
+        self.obj2class = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
+        self.type2class = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
 
         self.class2type = {self.type2class[t]: t for t in self.type2class}
         #self.obj2onehotclass = {'Microwave': 0, 'HousePlant': 1, 'GarbageCan': 2, 'Stool': 3, 'Chair': 4, 'SideTable': 5, 'DiningTable': 6, 'Television': 7, 'FloorLamp': 8, 'ArmChair': 9, 'CoffeeTable': 10, 'Sofa': 11, 'Desk': 12, 'Dresser': 13, 'Bed': 14, 'CoffeeMachine': 15, 'Laptop': 16, 'DeskLamp': 17, 'Plunger': 18, 'Fridge': 19, 'Toilet': 20} ##TODO##
-        #self.obj2onehotclass = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
-        #self.typeonehotclass = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
+        self.obj2onehotclass = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
+        self.typeonehotclass = {'wall': 0,'pillow': 1,'chair': 2,'shelf': 3,'box': 4,'table': 5,'picture': 6,'plant': 7,'cabinet': 8,'door': 9}
 
     def angle2class(self, angle):
         """Convert continuous angle to discrete class
@@ -393,12 +389,13 @@ class ECCDetectionDataset(Dataset):
         #gt_bboxes[0 : bboxes.shape[0],1] = bboxes_1[:,0]
         #gt_bboxes[0 : bboxes.shape[0],2] = bboxes_1[:,2]
         
-        key_ids = 0
-        for key in allcaps:
-            curr_cap_id = random.randint(0,len(allcaps[key])-1)
-            captions[key_ids] = allcaps[key][curr_cap_id][1:]
-            caption_lens[key_ids] = allcaps[key][curr_cap_id][0]
-            key_ids = key_ids + 1
+        #key_ids = 0
+        #for key in allcaps:
+        #curr_cap_id = 0#random.randint(0,len(allcaps[key])-1)
+        #print(allcaps[key][curr_cap_id])
+        #print(allcaps)
+        captions[0] = allcaps[1:]
+        caption_lens[0] = allcaps[0]
         #key_ids = key_ids + 1
 
         #key_ids = 0
