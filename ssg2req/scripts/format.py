@@ -6,6 +6,7 @@ from id2bbox import bboxTransform
 from wordcloud import WordCloud
 from collections import Counter
 import copy
+import shutil
 from edit_file import edit_objects, edit_relationships
 from re_generator import dataset_prepare, duplicate_delection2refer
 
@@ -14,7 +15,9 @@ from re_generator import dataset_prepare, duplicate_delection2refer
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
 used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
 #Macbook
-scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
+#scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
+#Ubuntu
+scan_path = "/home/fumiya/matsu/3RScan/data/3RScan/"
 datasets_path = "../../data/datasets/"
 question_path = "../../data/question.json"
 questions_json = open(question_path,"r")
@@ -22,12 +25,20 @@ split_info = "../../data/splits/"
 scan_info_path = "../../data/3RScan.json"
 scan_json = open(scan_info_path,"r")
 scan_file = json.load(scan_json)
-scene2id_path = "../../data/id2scene_ref.json"
-id2word_path = "../../data/id2word.json"
+scene2id_path = "../../data/datasets/id2scene_ref.json"
+id2word_path = "../../data/datasets/id2word.json"
 use_class_path = "../../data/used_classses.json"
 stat = "../../data/used_dataset_statistics.txt"
 test_mesh_path = "/home/fumiya/matsu/3RScan/splits/test_mesh/"
 test_pcd_path = "/home/fumiya/matsu/3RScan/splits/test_pcd/"
+
+shutil.rmtree("../../data/datasets/train")
+shutil.rmtree("../../data/datasets/test")
+shutil.rmtree("../../data/datasets/val")
+os.mkdir('../../data/datasets/train')
+os.mkdir('../../data/datasets/test')
+os.mkdir('../../data/datasets/val')
+
 
 kotoba = []
 
@@ -237,3 +248,18 @@ with open(scene2id_path,'w') as outfile:
 for origin in s_test:
     mesh_path = scan_path + origin + "/mesh.refined.v2.obj"
 """
+
+all_list = ['train/','val/','test/']
+
+with open(scene2id_path,'r') as f:
+  kk = json.load(f)  
+
+for li in all_list:
+  for item in os.listdir(datasets_path+li):
+    if '.npy' not in item:
+      continue
+      
+    current_index = int(item.split('_')[0])
+    current_key = kk[str(current_index)]['scene_id']
+    
+    shutil.copy(datasets_path + 'pcl/'+current_key+'.npz', datasets_path + li+str(current_index).zfill(6)+'_pcd.npz')
