@@ -15,9 +15,9 @@ from re_generator import dataset_prepare, duplicate_delection2refer
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
 #used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
 #Macbook
-#scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
+scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
 #Ubuntu
-scan_path = "/home/fumiya/matsu/3RScan/data/3RScan/"
+#scan_path = "/home/fumiya/matsu/3RScan/data/3RScan/"
 datasets_path = "../../data/datasets/"
 question_path = "../../data/question.json"
 questions_json = open(question_path,"r")
@@ -179,7 +179,9 @@ for q in tqdm(q_file):###TODO###
         encoded_re = np.pad(np.array(encoded_re), [(0,30-len(encoded_re))])
 
         for q_words in q["q_tokens"]:
-            encoded_q = [len(q["q_tokens"]),word2id["<start>"]]
+            #これだとGT質問の個数が文字数として格納されてしまう
+            #encoded_q = [len(q["q_tokens"]),word2id["<start>"]]
+            encoded_q = [len(q_words),word2id["<start>"]]
             for q_word in q_words:
                 encoded_q.append(word2id[q_word])
             encoded_q.append(word2id["<end>"])
