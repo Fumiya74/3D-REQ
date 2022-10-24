@@ -13,7 +13,7 @@ from re_generator import dataset_prepare, duplicate_delection2refer
 #import tensorflow_datasets as tfds
 
 use_class = ['wall','pillow','chair','shelf','box','table','picture','plant','cabinet','door']
-used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
+#used_classes = {0:'wall',1:'pillow',2:'chair',3:'shelf',4:'box',5:'table',6:'picture',7:'plant',8:'cabinet',9:'door'}
 #Macbook
 #scan_path = "/Users/fumiyamatsuzawa/resarch/3RScan/data/3RScan/"
 #Ubuntu
@@ -83,12 +83,13 @@ for word in tokens:
         word2id[word] = id
 
         id2word[id] = word
-""""
+"""
 with open(use_class_path,'w') as outfile:
     json.dump(used_classes, outfile, indent=2)
+"""
 with open(id2word_path,'w') as outfile:
     json.dump(id2word, outfile, indent=2)
-"""
+
 #encoder = tfds.features.text.TokenTextEncoder(vocab_list,lowercase=True)
 print(word2id)
 #単語数は30
@@ -198,7 +199,15 @@ for q in tqdm(q_file):###TODO###
                     #print("DEBUG: ",s["id"])    
 
                 bbox = (bboxTransform(s))
-                bbox.append(int(q["nyu40"]))
+                if int(q["nyu40"]) == 3:
+                    bbox.append(0)
+                elif int(q["nyu40"]) == 5:
+                    bbox.append(1)
+                elif int(q["nyu40"]) == 7:
+                    bbox.append(2)
+                #bbox.append(int(q["nyu40"]))
+                #TO CHANGE
+                #クラスを増やしたときは定義した辞書から取ってこれるようにする
                 bboxes.append(bbox)
         for bp in bbox[3:6]:
             bp = bp/2
