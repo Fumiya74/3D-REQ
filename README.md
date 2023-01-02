@@ -1,4 +1,4 @@
-# CyREx(Clarify your Referring Expression):Dialog Generation for Uncertainty Elimination in 3D Grounding
+# 3D-REQ:Question Generation for Uncertainty Elimination of Referring Expression in 3D Environment
 
 ## Project 
 ``` 
