@@ -1,0 +1,40 @@
+spatial:A - B:supported by
+spatial:A to the - of B:left
+spatial:A to the - of B:right
+spatial:A in - of B:front
+spatial:A - B:behind
+spatial:A - B:close by
+spatial:A - B:inside
+comparative:bigger A:bigger than
+comparative:smaller A:smaller than
+comparative:higher A:higher than
+comparative:lower A:lower than
+#same symmetry as
+#same as
+spatial:A - B:attached to
+spatial:A - B:standing on
+spatial:A - B:lying on
+spatial:A - B:hanging on
+spatial:A - B:connected to
+spatial:A - B:leaning against
+includion:A is - B:part of
+includion:A - B:belonging to
+#A - B:build in
+spatial:A - B:standing in
+spatial:A -ing B:cover
+spatial:A - B:lying in
+spatial:A - B:hanging in
+#same color
+#same material
+#same texture
+#same shape
+#same state
+#same object type
+comparative:messier A:messier than
+comparative:cleaner A:cleaner than
+comparative:fuller A:fuller than
+comparative:more closed A:more closed
+comparative:more open A:more open
+comparative:brighter A:brighter than
+comparative:darker than
+#more comfortable than
